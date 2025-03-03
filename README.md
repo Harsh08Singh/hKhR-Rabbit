@@ -1,10 +1,9 @@
 # 🚀 MPU6050 Gyroscope Monitoring System
 
 ## Demo
-![](https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/analysis.gif)
-![](https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/cipherState.gif)
 ![](https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/drone2.gif)
-![](https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/drone.gif)
+
+
 ![](https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/overview.gif)
 
 ## 🔥 Overview
@@ -40,7 +39,7 @@ The system is built on three core layers:
   - 📡 **Live Data Streams**
   - 🚁 **3D Model**
   - 📈 **Historical Trends**
-
+![](https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/analysis.gif)
 ---
 
 ## 🔄 Data Flow
@@ -77,6 +76,7 @@ The system is built on three core layers:
 - The **Flask API** launches on startup.
 - The Flask API connects dynamically with a **rabbitCli.exe** in real time that interacts with **Rabbit.h** (header file implementation) for Data Encryption
 - We manually initialize rabbitCli.exe with 64 bit **IV** (Initialization Vector) and 128 bit **Key**
+![](https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/cipherState.gif)
 
 ### 📱 **Client Setup**
 
