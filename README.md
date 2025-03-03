@@ -1,5 +1,13 @@
 # 🚀 MPU6050 Gyroscope Monitoring System
 
+## Demo
+
+https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/analysis.gif
+https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/cipherState.gif
+https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/drone2.gif
+https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/drone.gif
+https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/overview.gif
+
 ## 🔥 Overview
 
 Welcome to the **MPU6050 Gyroscope Monitoring System**, a cutting-edge real-time motion tracking solution! This system, powered by a **Raspberry Pi** and an **MPU6050 sensor**, securely transmits gyroscope, accelerometer, and temperature data using **Rabbit Cipher encryption**. With a sleek web interface, you can visualize sensor data like never before! 🌐📊
