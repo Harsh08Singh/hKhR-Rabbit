@@ -1,8 +1,8 @@
 # 🚀 MPU6050 Gyroscope Monitoring System
 
 ## Demo
+[!me](https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/analysis.gif)
 
-https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/analysis.gif
 https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/cipherState.gif
 https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/drone2.gif
 https://github.com/Harsh08Singh/hKhR-Rabbit/blob/main/assets/drone.gif
