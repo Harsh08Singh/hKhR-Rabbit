@@ -2341,7 +2341,10 @@ function decryptData(hexData) {
       return response.json();
     })
     .then((data) => {
-      console.log("👺", data);
+      const connectionStatus = document.getElementById("connectionStatus");
+      connectionStatus.textContent = `Fetching Sensor Data`;
+      const encryptionBadge = document.getElementById("encryptionBadge");
+      encryptionBadge.textContent = `Encrypted`;
       const endTime = performance.now();
       const decryptTime = endTime - startTime;
       decryptTimes.push(decryptTime);
