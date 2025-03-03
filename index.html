@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure MPU-6050 Sensor Dashboard</title>
+    <!-- Add the required libraries -->
+    <script src="CHART/moment.min.js"></script>
+    <script src="CHART/chart.min.js"></script>
+    <script src="CHART/chartjs-adapter-moment.min.js"></script>
+
+    <!-- Load React and ReactDOM -->
+    <script src="REACT/react.production.min.js"></script>
+    <script src="REACT/react-dom.production.min.js"></script>
+
+    <!-- Load Babel for JSX -->
+    <script src="REACT/babel.min.js"></script>
+
+    <!-- Add Three.js libraries -->
+    <script src="REACT/three.min.js"></script>
+    <script src="REACT/GLTFLoader.js"></script>
+    <script src="REACT/OrbitControls.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="dashboard">
+      <h1>Secure MPU-6050 Sensor Dashboard</h1>
+
+      <div class="connection-status">
+        <div>
+          <span
+            class="connection-indicator connection-connected"
+            id="connectionIndicator"
+          ></span>
+          <span id="connectionStatus">Simulating sensor data</span>
+        </div>
+        <div class="badge" id="encryptionBadge">Encrypted</div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="dashboard">Dashboard</div>
+        <div class="tab" data-tab="encryption">Encryption Settings</div>
+        <div class="tab" data-tab="visualization">Cipher Visualization</div>
+      </div>
+
+      <!-- <div class="tab-content active" id="dashboard-tab">
+        <div class="data-flow">
+          <div class="flow-step active">
+            <div class="flow-icon">📡</div>
+            <div>Receive Data</div>
+          </div>
+          <div class="flow-step active">
+            <div class="flow-icon">🔐</div>
+            <div>Decrypt</div>
+          </div>
+          <div class="flow-step active">
+            <div class="flow-icon">📊</div>
+            <div>Process</div>
+          </div>
+          <div class="flow-step active">
+            <div class="flow-icon">📈</div>
+            <div>Visualize</div>
+          </div>
+        </div>
+
+        <div class="current-readings">
+          <div class="sensor-card">
+            <div class="sensor-title">Accelerometer (g)</div>
+            <div class="axis-values">
+              <div class="axis-box x-axis">
+                <div class="axis-label x-axis">X</div>
+                <div class="axis-value" id="accelX">-</div>
+              </div>
+              <div class="axis-box y-axis">
+                <div class="axis-label y-axis">Y</div>
+                <div class="axis-value" id="accelY">-</div>
+              </div>
+              <div class="axis-box z-axis">
+                <div class="axis-label z-axis">Z</div>
+                <div class="axis-value" id="accelZ">-</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sensor-card">
+            <div class="sensor-title">Gyroscope (deg/s)</div>
+            <div class="axis-values">
+              <div class="axis-box x-axis">
+                <div class="axis-label x-axis">X</div>
+                <div class="axis-value" id="gyroX">-</div>
+              </div>
+              <div class="axis-box y-axis">
+                <div class="axis-label y-axis">Y</div>
+                <div class="axis-value" id="gyroY">-</div>
+              </div>
+              <div class="axis-box z-axis">
+                <div class="axis-label z-axis">Z</div>
+                <div class="axis-value" id="gyroZ">-</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sensor-card">
+            <div class="sensor-title">Temperature</div>
+            <div class="temp-display">
+              <div class="temp-value" id="temperature">-</div>
+              <div>°C</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="device-orientation">
+          <div class="sensor-title">Device Orientation</div>
+          <div class="orientation-container">
+            <div class="device-model" id="deviceModel">
+              <div class="device-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 2v6h-6"></path>
+                  <path d="M21 13a9 9 0 1 1-9-9"></path>
+                </svg>
+              </div>
+              <div class="device-face face-front">Front</div>
+              <div class="device-face face-back">Back</div>
+              <div class="device-face face-left">Left</div>
+              <div class="device-face face-right">Right</div>
+            </div>
+          </div>
+        </div>
+        <div id="droneViewContainer"></div>
+        <div class="charts-container">
+          <div class="chart-card">
+            <div class="sensor-title">Accelerometer History</div>
+            <div class="chart-container">
+              <canvas id="accelChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="sensor-title">Gyroscope History</div>
+            <div class="chart-container">
+              <canvas id="gyroChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <div class="tab-content active" id="dashboard-tab">
+        <!-- Data Flow Indicators -->
+        <div class="data-flow">
+          <div class="flow-step active">
+            <div class="flow-icon">
+              <img src="assets/rec.gif" alt="Receive" width="40" height="40" />
+            </div>
+            <div class="flow-label">Receive</div>
+          </div>
+
+          <div class="flow-step active">
+            <div class="flow-icon">
+              <img
+                src="assets/encrypted.gif"
+                alt="Decrypt"
+                width="40"
+                height="40"
+              />
+            </div>
+            <div class="flow-label">Decrypt</div>
+          </div>
+
+          <div class="flow-step active">
+            <div class="flow-icon">
+              <img
+                src="assets/process.gif"
+                alt="Process"
+                width="40"
+                height="40"
+              />
+            </div>
+            <div class="flow-label">Process</div>
+          </div>
+
+          <div class="flow-step active">
+            <div class="flow-icon">
+              <img
+                src="assets/visualize.gif"
+                alt="Visualize"
+                width="40"
+                height="40"
+              />
+            </div>
+            <div class="flow-label">Visualize</div>
+          </div>
+        </div>
+
+        <!-- Sensor Readings -->
+        <div class="dashboard-grid">
+          <div class="dashboard-column readings-column">
+            <div class="sensor-card accel-card">
+              <div class="sensor-title">Accelerometer (g)</div>
+              <div class="axis-values">
+                <div class="axis-box x-axis">
+                  <div class="axis-label">X</div>
+                  <div class="axis-value" id="accelX">-</div>
+                </div>
+                <div class="axis-box y-axis">
+                  <div class="axis-label">Y</div>
+                  <div class="axis-value" id="accelY">-</div>
+                </div>
+                <div class="axis-box z-axis">
+                  <div class="axis-label">Z</div>
+                  <div class="axis-value" id="accelZ">-</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sensor-card gyro-card">
+              <div class="sensor-title">Gyroscope (deg/s)</div>
+              <div class="axis-values">
+                <div class="axis-box x-axis">
+                  <div class="axis-label">X</div>
+                  <div class="axis-value" id="gyroX">-</div>
+                </div>
+                <div class="axis-box y-axis">
+                  <div class="axis-label">Y</div>
+                  <div class="axis-value" id="gyroY">-</div>
+                </div>
+                <div class="axis-box z-axis">
+                  <div class="axis-label">Z</div>
+                  <div class="axis-value" id="gyroZ">-</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sensor-card temp-card">
+              <div class="sensor-title">Temperature</div>
+              <div class="temp-display">
+                <div class="temp-value" id="temperature">-</div>
+                <div class="temp-unit">°C</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-column orientation-column">
+            <div class="device-orientation">
+              <div class="sensor-title">Device Orientation</div>
+              <div class="orientation-container">
+                <div class="device-model" id="deviceModel">
+                  <div class="device-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M21 2v6h-6"></path>
+                      <path d="M21 13a9 9 0 1 1-9-9"></path>
+                    </svg>
+                  </div>
+                  <div class="device-face face-front">Front</div>
+                  <div class="device-face face-back">Back</div>
+                  <div class="device-face face-left">Left</div>
+                  <div class="device-face face-right">Right</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drone and Charts Section -->
+        <div class="drone-charts-container">
+          <!-- Drone View -->
+          <div id="droneViewContainer" class="drone-view-container">
+            <!-- Three.js will render drone here -->
+          </div>
+
+          <!-- Charts -->
+          <!-- Charts -->
+          <div class="visualization-column">
+            <!-- Add this chart controls container -->
+            <div id="chartControls" class="chart-controls">
+              <div class="control-group">
+                <label for="timeRange">Time Display:</label>
+                <select id="timeRange" title="Select time range to display">
+                  <option value="10">Last 10 seconds</option>
+                  <option value="30">Last 30 seconds</option>
+                  <option value="60">Last 1 minute</option>
+                  <option value="300">Last 5 minutes</option>
+                  <option value="all" selected>All Data</option>
+                </select>
+              </div>
+              <div class="control-group">
+                <button
+                  id="resetZoom"
+                  class="control-button"
+                  title="Reset chart zoom level"
+                >
+                  Reset Zoom
+                </button>
+                <button
+                  id="toggleFill"
+                  class="control-button"
+                  title="Toggle area fill on charts"
+                >
+                  Toggle Fill
+                </button>
+                <button
+                  id="toggleDarkMode"
+                  class="control-button"
+                  title="Switch between light and dark mode"
+                >
+                  <span class="mode-icon">☀️</span>
+                </button>
+              </div>
+              <div class="control-group">
+                <label title="Synchronize zoom and pan between charts">
+                  <input type="checkbox" id="syncCharts" checked />
+                  Sync Charts
+                </label>
+                <label title="Smooth data transitions">
+                  <input type="checkbox" id="animateCharts" checked />
+                  Animate
+                </label>
+              </div>
+              <div class="chart-status">
+                <span id="dataPointCount">0 data points</span>
+                <div
+                  id="recordingIndicator"
+                  class="recording-indicator"
+                  style="display: none"
+                >
+                  Recording
+                </div>
+              </div>
+            </div>
+            <div class="chart-container-wrapper">
+              <!-- Your existing chart cards -->
+              <div class="chart-card">
+                <div class="sensor-title">Accelerometer History</div>
+                <div class="chart-container">
+                  <canvas id="accelChart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-card">
+                <div class="sensor-title">Gyroscope History</div>
+                <div class="chart-container">
+                  <canvas id="gyroChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistics Panel -->
+        <div id="dataStatistics" class="data-statistics">
+          <!-- Statistics content will be inserted by updateDataStatistics() function -->
+        </div>
+      </div>
+      <div class="tab-content" id="encryption-tab">
+        <div class="encryption-config">
+          <div class="config-card">
+            <div class="card-title">
+              <span>Rabbit Cipher Configuration</span>
+              <div class="encryption-status">
+                <span
+                  class="status-indicator status-active"
+                  id="encryptionStatus"
+                ></span>
+                <span>Active</span>
+              </div>
+            </div>
+
+            <div class="toggle-container">
+              <span class="toggle-label">Enable Encryption:</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="encryptionToggle" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="input-group">
+              <label for="key"
+                >Key (16 bytes in hex format, space separated):</label
+              >
+              <input
+                type="text"
+                id="key"
+                class="bytes-input"
+                placeholder="00 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF"
+              />
+              <div class="error" id="keyError"></div>
+            </div>
+
+            <div class="input-group">
+              <label for="iv"
+                >IV (8 bytes in hex format, space separated):</label
+              >
+              <input
+                type="text"
+                id="iv"
+                class="bytes-input"
+                placeholder="01 23 45 67 89 AB CD EF"
+              />
+              <div class="error" id="ivError"></div>
+            </div>
+
+            <div class="button-group">
+              <button id="applyConfig">Apply Configuration</button>
+              <button class="secondary" id="resetConfig">Reset</button>
+            </div>
+          </div>
+
+          <div class="config-card">
+            <div class="card-title">Decryption Statistics</div>
+
+            <div class="data-table">
+              <table class="data-table">
+                <tr>
+                  <th>Total Packets Received</th>
+                  <td id="totalPackets">0</td>
+                </tr>
+                <tr>
+                  <th>Successfully Decrypted</th>
+                  <td id="successPackets">0</td>
+                </tr>
+                <tr>
+                  <th>Failed to Decrypt</th>
+                  <td id="failedPackets">0</td>
+                </tr>
+                <tr>
+                  <th>Average Decryption Time</th>
+                  <td id="avgDecryptTime">0 ms</td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="margin-top: 20px">
+              <button id="viewDataStream">View Raw Data Stream</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="visualization-tab">
+        <div class="cipher-visualization">
+          <div class="card-title">Rabbit Cipher Operation Visualization</div>
+
+          <div class="tabs" style="margin-top: 15px">
+            <div class="tab active" data-subtab="internal-state">
+              Internal State
+            </div>
+            <div class="tab" data-subtab="encryption-process">
+              Encryption Process
+            </div>
+            <div class="tab" data-subtab="decryption-process">
+              Decryption Process
+            </div>
+          </div>
+
+          <div class="tab-content active" id="internal-state-tab">
+            <div class="visualization-content" id="stateVisualization">
+              No state data available. Turn on visualization in encryption
+              settings.
+            </div>
+          </div>
+
+          <div class="tab-content" id="encryption-process-tab">
+            <div class="visualization-content" id="encryptionVisualization">
+              No encryption visualization data available.
+            </div>
+          </div>
+
+          <div class="tab-content" id="decryption-process-tab">
+            <div class="visualization-content" id="decryptionVisualization">
+              No decryption visualization data available.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="drone-view-tab">
+        <div class="cipher-visualization">
+          <div class="card-title">3D Drone Model</div>
+          <p>Interactive 3D model synchronized with sensor data</p>
+
+          <div class="drone-model-container" id="droneViewContainer">
+            <!-- Your React component will be mounted here -->
+          </div>
+          <div class="model-controls">
+            <button id="resetView">Reset View</button>
+            <button id="toggleRotation">Pause Rotation</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Raw Data Stream Modal -->
+    <div class="modal" id="dataStreamModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">Raw Data Stream</div>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="tabs">
+            <div class="tab active" data-modal-tab="raw-data">
+              Raw Encrypted
+            </div>
+            <div class="tab" data-modal-tab="decrypted-data">Decrypted</div>
+          </div>
+
+          <div class="tab-content active" id="raw-data-tab">
+            <div class="visualization-content" id="rawDataVisualization">
+              No raw data available.
+            </div>
+          </div>
+
+          <div class="tab-content" id="decrypted-data-tab">
+            <div class="visualization-content" id="decryptedDataVisualization">
+              No decrypted data available.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <script src="sensor-dashboard.js"></script> -->
+    <script src="script.js"></script>
+    <script>
+      // Apply inline styles to drone container
+      const droneContainer = document.getElementById("droneViewContainer");
+      // Apply inline styles
+      droneContainer.style.display = "block";
+      droneContainer.style.width = "100%";
+      droneContainer.style.height = "100%";
+      droneContainer.style.minHeight = "350px";
+      droneContainer.style.backgroundColor = "#2d3748";
+      droneContainer.style.borderRadius = "12px";
+      droneContainer.style.overflow = "hidden";
+      droneContainer.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+      droneContainer.style.position = "relative";
+
+      // Add title for drone view
+      const droneTitle = document.createElement("div");
+      droneTitle.textContent = "Drone View";
+      droneTitle.style.position = "absolute";
+      droneTitle.style.top = "10px";
+      droneTitle.style.left = "15px";
+      droneTitle.style.color = "#ffffff";
+      droneTitle.style.fontSize = "14px";
+      droneTitle.style.fontWeight = "600";
+      droneTitle.style.zIndex = "10";
+      droneContainer.appendChild(droneTitle);
+
+      // Scene setup
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x2d3748); // Matches the container background
+
+      // Set up camera
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        droneContainer.clientWidth / droneContainer.clientHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(-1, 0, 1.8);
+
+      // Renderer setup
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(droneContainer.clientWidth, droneContainer.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      droneContainer.appendChild(renderer.domElement);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(3, 5, 2);
+      directionalLight.castShadow = true;
+      scene.add(directionalLight);
+
+      // Add subtle spotlight from front
+      const spotLight = new THREE.SpotLight(0x4682b4, 0.8);
+      spotLight.position.set(0, 1, 3);
+      spotLight.angle = Math.PI / 6;
+      spotLight.penumbra = 0.2;
+      spotLight.decay = 2;
+      spotLight.distance = 50;
+      scene.add(spotLight);
+
+      // Add ground grid for better perspective
+      const gridHelper = new THREE.GridHelper(10, 20, 0x0096ff, 0x444444);
+      gridHelper.position.y = -1;
+      scene.add(gridHelper);
+
+      // Variable to store sensor data
+      let droneSensorData = null;
+
+      // Listen for sensor data
+      window.addEventListener("sensorDataUpdate", function (event) {
+        droneSensorData = event.detail;
+      });
+
+      // Loading indicator
+      const loadingElement = document.createElement("div");
+      loadingElement.textContent = "Loading Drone Model...";
+      loadingElement.style.position = "absolute";
+      loadingElement.style.top = "50%";
+      loadingElement.style.left = "50%";
+      loadingElement.style.transform = "translate(-50%, -50%)";
+      loadingElement.style.color = "#ffffff";
+      loadingElement.style.fontSize = "16px";
+      loadingElement.style.fontWeight = "500";
+      droneContainer.appendChild(loadingElement);
+
+      // Load GLTF Model
+      const loader = new THREE.GLTFLoader();
+      let drone;
+
+      loader.load(
+        "drone.glb",
+        function (gltf) {
+          // Remove loading indicator
+          droneContainer.removeChild(loadingElement);
+
+          drone = gltf.scene;
+          drone.scale.set(1, 1, 1);
+          drone.position.set(-1, 0, 0);
+          scene.add(drone);
+
+          // Add subtle rotation animation
+          function animate() {
+            requestAnimationFrame(animate);
+
+            if (droneSensorData) {
+              // Smooth lerp transitions for rotation
+              drone.rotation.x = THREE.MathUtils.lerp(
+                drone.rotation.x,
+                droneSensorData.gyro.x * 0.1,
+                0.1
+              );
+              drone.rotation.y = THREE.MathUtils.lerp(
+                drone.rotation.y,
+                droneSensorData.gyro.y * 0.1,
+                0.1
+              );
+              drone.rotation.z = THREE.MathUtils.lerp(
+                drone.rotation.z,
+                droneSensorData.gyro.z * 0.1,
+                0.1
+              );
+
+              // Add subtle hovering effect
+              drone.position.y = Math.sin(Date.now() * 0.001) * 0.05;
+            } else {
+              // Default animation when no sensor data
+              drone.rotation.y += 0.01;
+              drone.position.y = Math.sin(Date.now() * 0.001) * 0.05;
+            }
+
+            renderer.render(scene, camera);
+          }
+          animate();
+        },
+        // Progress callback
+        function (xhr) {
+          const percent = ((xhr.loaded / xhr.total) * 100).toFixed(0);
+          loadingElement.textContent = `Loading Drone Model: ${percent}%`;
+        },
+        // Error callback
+        function (error) {
+          loadingElement.textContent = "Error loading model";
+          loadingElement.style.color = "#ff6b6b";
+          console.error("Error loading model:", error);
+        }
+      );
+
+      // Handle window and container resizing
+      function handleResize() {
+        const width = droneContainer.clientWidth;
+        const height = droneContainer.clientHeight;
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      }
+
+      // Add event listeners for resize
+      window.addEventListener("resize", handleResize);
+
+      // Create a new ResizeObserver to monitor container size changes
+      const resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver.observe(droneContainer);
+    </script>
+  </body>
+</html>
